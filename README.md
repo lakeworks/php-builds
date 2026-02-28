@@ -37,6 +37,29 @@ opcache, openssl, pdo_firebird, pdo_mysql, pdo_oci, pdo_odbc, pdo_pgsql,
 pdo_sqlite, pgsql, shmop, snmp, soap, sockets, sodium, sqlite3, sysvshm,
 tidy, xsl, zend_test, zip
 
+## PGO Training Workloads
+
+PHP is built with PGO (Profile-Guided Optimization). The compiler instruments the binary on a first pass, runs real PHP workloads to collect execution profiles, then recompiles with those profiles to optimize branch prediction, inlining, and instruction layout.
+
+Because all dependency libraries are compiled with `/GL` (LTCG bitcode), they are PGI-instrumented at PHP link time and PGO-optimized alongside PHP itself. Stock deps (pre-compiled COFF) cannot be instrumented this way.
+
+**Training workloads used:**
+
+| Workload | Source | Covers |
+|----------|--------|--------|
+| WordPress | PHP SDK built-in (`phpsdk_pgo`) | String/array ops, JSON, XML, SQLite, HTTP, zlib |
+| Symfony | PHP SDK built-in (`phpsdk_pgo`) | OOP dispatch, routing, serialization, templates |
+| GD codec training | Custom (`pgo/gd-training.php`) | JPEG, PNG, WebP, AVIF encode/decode (800×800 product photos) |
+| FreeType | Custom | Font rasterization |
+| PCRE2 + Oniguruma | Custom | Regex matching (Latin/CJK/Cyrillic/Arabic) |
+| mbstring | Custom | Unicode normalization, multibyte string ops |
+| zlib-ng | Custom | `gzencode`/`gzdecode` at multiple compression levels |
+| libxml2 | Custom | DOM/SimpleXML/XPath parsing |
+| Hashing | Custom | bcrypt, SHA-256/512, `password_hash` |
+| libsodium | Custom | `sodium_crypto_*` (encryption, signing, hashing) |
+| SQLite | Custom | Prepared statements, transactions |
+| Misc PHP | Custom | Serialize/unserialize, base64, file I/O, `glob` |
+
 ## PECL Extensions Included
 
 | Extension | Version | Notes |
