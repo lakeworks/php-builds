@@ -85,11 +85,8 @@ The following libraries are rebuilt from source with `/arch:AVX512` targeting th
 
 | Component | Details |
 |-----------|---------|
-| **Host** | OVH Rise-S-2 dedicated server |
+| **Host** | Windows Server 2025 VM |
 | **CPU** | AMD Ryzen 7 9700X (Zen 5, 8C/16T, 5.5 GHz boost) |
-| **RAM** | 64 GB DDR5 5200 MHz |
-| **OS** | Windows Server 2025 Standard (10.0.26100) |
-| **Virtualization** | Proxmox 8.4 / KVM (`cpu: host,flags=+aes`) |
 | **CPU Features** | SSE4.2, AVX, AVX2, AVX-512, AES-NI |
 
 ## Build Toolchain
