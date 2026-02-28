@@ -43,43 +43,38 @@ Dependencies fetched from `downloads.php.net/~windows/php-sdk/deps/` (staging br
 
 ### Stock Dependencies (from PHP SDK server)
 
+Remaining stock libs not rebuilt from source:
+
 | Library | Version | Notes |
 |---------|---------|-------|
-| OpenSSL | 3.0.19 | Uses AES-NI/AVX2 via runtime detection |
-| cURL | 8.18.0 (package) | Static lib reports 8.7.0-DEV (upstream packaging bug) |
 | ICU | 72.1 | Unicode 15.0 |
-| libxml2 | 2.10.4 | |
-| zlib | 1.2.12 | |
-| PCRE2 | 10.42 | |
-| libpng | 1.6.34 | |
-| libjpeg-turbo | 2.1.0 | |
-| FreeType | 2.11.1 | |
 | libssh2 | 1.10.0 | |
-| libwebp | 1.3.2 | |
-| sqlite3 | 3.40.0 | |
 | libzip | 1.7.1 | |
-| oniguruma | 6.9.8 | |
 | nghttp2 | 1.59.0 | |
-| libsodium | 1.0.18 | |
 | libpq | 14.21 | PostgreSQL client |
 | BZip2 | 1.0.8 | |
 | iconv | 1.17 | |
+| PCRE2 | 10.42 | Bundled in PHP source, compiled with `/arch:AVX512` |
 
-### Optimized Dependencies (rebuilt from source with AVX-512)
+### Optimized Dependencies (rebuilt from source)
 
-The following libraries are rebuilt from source with `/arch:AVX512` targeting the server's AMD Zen 5 CPU. These replace the generic x64 binaries from the PHP SDK server.
+The following libraries are rebuilt from source with `/arch:AVX512 /GL /Ox /MT`. The `/GL` flag emits LTCG bitcode — PHP's linker can inline across PHP ↔ library boundaries and PGO-instrument library hot paths using real PHP workload profiles. Stock deps (pre-compiled COFF) don't benefit from either.
 
-| Library | Stock → Rebuilt | Key Improvement |
-|---------|----------------|-----------------|
-| zlib → **zlib-ng** | 1.2.12 → 2.2.x | 2-5x faster gzip (AVX-512 VBMI2 deflate) |
-| **libjpeg-turbo** | 2.1.0 → 3.1.x | AVX-512 JPEG encode/decode for product images |
-| **PCRE2** | 10.42 → 10.45 | AVX2 JIT for regex matching |
-| **libcurl** | 8.7.0-DEV → 8.12.1 | Fixed static lib version, HTTP/2 performance |
-| **libpng** | 1.6.34 → 1.6.47 | SSE2/AVX2 PNG filters |
-| **libwebp** | 1.3.2 → 1.5.0 | SIMD WebP encode/decode |
-| **libxml2** | 2.10.4 → 2.13.6 | Security fixes + performance |
-| **sqlite3** | 3.40.0 → 3.48.0 | Latest stable |
-| **FreeType** | 2.11.1 → 2.13.3 | Minor improvements |
+| Library | Stock → Rebuilt | SIMD | Key Improvement |
+|---------|----------------|------|-----------------|
+| **OpenSSL** | 3.0.19 → **3.5.5** | AVX-512 VAES, IFMA52 | AES-GCM, RSA acceleration; latest security patches |
+| zlib → **zlib-ng** | 1.2.12 → **2.3.3** | AVX-512 VNNI + AVX2 | 2-5x faster gzip (AVX-512 slide_hash, 4-way adler32 VPDPBUSD) |
+| **libjpeg-turbo** | 2.1.0 → **3.1.3** | AVX2 + SSE2 (NASM) | +25% encode / +15% decode vs stock (LTCG + PGO) |
+| **libpng** | 1.6.34 → **1.6.47** | SSSE3 + zlib-ng | Security fixes; gains from linked zlib-ng |
+| **libwebp** | 1.3.2 → **1.6.0** | AVX2 + SSE4.1 | Runtime SIMD dispatch; lossless ~10% faster |
+| **libaom** | — → **3.13.1** | AVX-512 + AVX2 | AVIF encoder: 75 AVX-512 functions via Highway |
+| **libavif** | — → **1.3.0** | (via libaom) | AVIF encode/decode support in PHP GD |
+| **libxml2** | 2.10.4 → **2.13.x** | Compiler | Security fixes; used by 7 PHP extensions |
+| **sqlite3** | 3.40.0 → **3.48.x** | Compiler | Latest stable |
+| **FreeType** | 2.11.1 → **2.13.x** | Compiler | Minor improvements |
+| **libcurl** | 8.7.0-DEV → **8.12.x** | Compiler | Fixed lib version; HTTP/2 performance |
+| **libsodium** | 1.0.18 → **1.0.21** | AVX-512F (runtime) | Pre-built LTCG; built-in AVX-512F dispatch for Argon2 |
+| **Oniguruma** | 6.9.8 → **6.9.10** | Compiler | Regex engine for `mb_ereg*`; LTCG + PGO |
 
 ## Build Environment
 
