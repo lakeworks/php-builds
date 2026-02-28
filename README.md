@@ -37,6 +37,13 @@ opcache, openssl, pdo_firebird, pdo_mysql, pdo_oci, pdo_odbc, pdo_pgsql,
 pdo_sqlite, pgsql, shmop, snmp, soap, sockets, sodium, sqlite3, sysvshm,
 tidy, xsl, zend_test, zip
 
+## PECL Extensions Included
+
+| Extension | Version | Notes |
+|-----------|---------|-------|
+| **imagick** | 3.8.1 | ImageMagick bindings; DLL merged into the PHP zip |
+| **redis** | 6.1.0 | Redis client; DLL merged into the PHP zip |
+
 ## Dependency Libraries
 
 Dependencies fetched from `downloads.php.net/~windows/php-sdk/deps/` (staging branch — actively maintained even while windows.php.net is frozen).
