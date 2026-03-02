@@ -94,7 +94,7 @@ The following libraries are rebuilt from source with `/arch:AVX512 /GL /Ox /MT`.
 |---------|----------------|------|-----------------|
 | **OpenSSL** | 3.0.19 → **3.5.5** | AVX-512 VAES, IFMA52 | AES-GCM, RSA acceleration; latest security patches |
 | zlib → **zlib-ng** | 1.2.12 → **2.3.3** | AVX-512 VNNI + AVX2 | 2-5x faster gzip (AVX-512 slide_hash, 4-way adler32 VPDPBUSD) |
-| **libjpeg-turbo** | 2.1.0 → **3.1.3** | AVX2 + SSE2 (NASM) | +25% encode / +15% decode vs stock (LTCG + PGO) |
+| **libjpeg-turbo** | 2.1.0 → **3.1.3** | AVX2 + SSE2 (NASM) | 4 years of security fixes (CVE-2025-50165, API hardening); AVX2 SIMD dispatch |
 | **libpng** | 1.6.34 → **1.6.47** | SSSE3 + zlib-ng | Security fixes; gains from linked zlib-ng |
 | **libwebp** | 1.3.2 → **1.6.0** | AVX2 + SSE4.1 | Runtime SIMD dispatch; lossless ~10% faster |
 | **libaom** | — → **3.13.1** | AVX-512 + AVX2 | AVIF encoder: 75 AVX-512 functions via Highway |
